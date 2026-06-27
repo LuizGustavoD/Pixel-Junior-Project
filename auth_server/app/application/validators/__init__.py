@@ -1,0 +1,2 @@
+from application.validators.register_validator import RegisterValidator
+from application.validators.login_validator import LoginValidator
