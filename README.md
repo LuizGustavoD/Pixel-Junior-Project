@@ -12,17 +12,7 @@ O ecossistema é estruturado em três módulos principais de responsabilidade ú
 2. **Servidor de Recursos (resurce_server)**: Serviço em Flask voltado ao armazenamento físico de arquivos e indexação de metadados no banco de dados. Realiza a validação de permissões e segurança em nível de usuário, além de gerar miniaturas de imagem em tempo real.
 3. **Cliente Web (frontend)**: Aplicação SPA construída em React + TypeScript + Vite, otimizada para ser responsiva e adaptável em qualquer tamanho de monitor (celulares, tablets, notebooks e telas Widescreen 4K). É empacotada com Nginx para distribuição de alta performance.
 
-O banco de dados utilizado é o **MySQL 8.0**, compartilhado entre as APIs para garantir integridade referencial.
-
-```mermaid
-graph TD
-    User[Navegador / Cliente] -->|Porta 3000| FE[Frontend Nginx + React]
-    FE -->|Autenticação (Porta 5000)| AS[Auth Server API]
-    FE -->|Recursos/Arquivos (Porta 5001)| RS[Resource Server API]
-    AS -->|Persistência Relacional| DB[(MySQL Database)]
-    RS -->|Persistência Relacional| DB
-    RS -->|Validação de Assinatura JWT| AS
-```
+O banco de dados relacional utilizado é o **MySQL 8.0**, compartilhado entre as APIs de back-end para fins de manutenção de integridade referencial de chaves estrangeiras relacionadas à propriedade dos arquivos indexados.
 
 ---
 

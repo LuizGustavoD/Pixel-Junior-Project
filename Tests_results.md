@@ -55,27 +55,7 @@ Os testes unitários do Resource Server simulam operações de persistência loc
 ## 3. Testes de Integração (Stack Completa)
 
 Os testes de integração simulam a jornada de ponta a ponta do usuário interagindo com o frontend e os servidores de backend no ambiente Docker.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Cliente
-    participant AuthAPI as Auth Server (Porta 5000)
-    participant ResourceAPI as Resource Server (Porta 5001)
-    participant DB as MySQL DB (Porta 3306)
-
-    Cliente->>AuthAPI: POST /auth/register (Registrar usuário)
-    AuthAPI->>DB: Salva credenciais (Bcrypt hash)
-    Cliente->>AuthAPI: POST /auth/login (Obter Token)
-    AuthAPI-->>Cliente: Retorna JWT (Assinado com chave privada RS256)
-    Cliente->>ResourceAPI: POST /files/upload (Enviar imagem com token JWT)
-    ResourceAPI->>AuthAPI: GET /token/public-key (Verificar assinatura do token)
-    AuthAPI-->>ResourceAPI: Retorna Chave Pública PEM
-    ResourceAPI->>ResourceAPI: Valida token + Grava arquivo no disco + Thumbnail
-    ResourceAPI->>DB: Insere metadados do arquivo
-    ResourceAPI-->>Cliente: Retorna status 201 (Sucesso)
-```
-
+---
 ### Detalhamento dos Passos Executados
 
 1. **Testando Health Checks**: Garante que as portas públicas `5000` (Auth) e `5001` (Resource) estão respondendo requisições HTTP.
