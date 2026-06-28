@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from domain.entities.user import User
 from domain.exceptions import UserAlreadyExistException
+from application.dto import UserRegisterRequestDTO, UserResponseDTO
 
 
 class RegisterUserUseCase:
@@ -10,19 +11,19 @@ class RegisterUserUseCase:
         self.user_repository = user_repository
         self.password_hasher = password_hasher
 
-    def execute(self, user_data):
-        if self.user_repository.exists_by_email(user_data['email']):
+    def execute(self, request_dto: UserRegisterRequestDTO) -> UserResponseDTO:
+        if self.user_repository.exists_by_email(request_dto.email):
             raise UserAlreadyExistException("E-mail já cadastrado")
 
-        hashed_password = self.password_hasher.hash(user_data['password'])
+        hashed_password = self.password_hasher.hash(request_dto.password)
         user = User(
             id=uuid4(),
-            email=user_data['email'],
-            username=user_data['username'],
+            email=request_dto.email,
+            username=request_dto.username,
             password=hashed_password,
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow()
         )
 
         saved_user = self.user_repository.save(user)
-        return saved_user
+        return UserResponseDTO(saved_user)

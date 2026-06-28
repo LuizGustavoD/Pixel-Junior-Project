@@ -1,0 +1,67 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+}
+
+.input-label {
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+  transition: var(--transition);
+}
+
+.input-element {
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
+  color: var(--text-h);
+  transition: var(--transition);
+  outline: none;
+}
+
+.input-element::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Hover and Focus States */
+.input-element:hover {
+  border-color: var(--text-muted);
+}
+
+.input-element:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(117, 76, 227, 0.15);
+}
+
+/* Error State */
+.input-has-error .input-element {
+  border-color: var(--error);
+}
+
+.input-has-error .input-element:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.input-has-error .input-label {
+  color: var(--error);
+}
+
+.input-error-msg {
+  font-size: 12px;
+  color: var(--error);
+  font-weight: 500;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.input-helper-msg {
+  font-size: 12px;
+  color: var(--text-muted);
+}

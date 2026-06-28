@@ -1,0 +1,140 @@
+.upload-card {
+  width: 100%;
+}
+
+.upload-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.upload-card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  background-color: rgba(117, 76, 227, 0.01);
+  transition: var(--transition);
+}
+
+.dropzone:hover,
+.dropzone-active {
+  border-color: var(--accent);
+  background-color: var(--accent-bg);
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.dropzone-icon {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  transition: var(--transition);
+}
+
+.dropzone:hover .dropzone-icon,
+.dropzone-active .dropzone-icon {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.dropzone-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.dropzone-browse {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* File Preview */
+.file-preview-container {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .file-preview-container {
+    background-color: rgba(25, 23, 33, 0.5);
+  }
+}
+
+.file-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.file-preview-details {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 2px;
+  max-width: 85%;
+}
+
+.file-preview-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+  word-break: break-all;
+}
+
+.file-preview-size {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.file-preview-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.file-preview-remove:hover {
+  color: var(--error);
+  background-color: var(--error-bg);
+}
+
+.upload-progress-box {
+  margin: 8px 0 16px;
+}
+
+.upload-error-msg {
+  font-size: 13px;
+  color: var(--error);
+  font-weight: 500;
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.upload-start-btn {
+  width: 100%;
+}

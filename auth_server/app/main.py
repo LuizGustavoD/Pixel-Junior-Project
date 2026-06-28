@@ -7,7 +7,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from infra.config.db import engine
 from infra.models.user_model import Base
-from infra.http.authentication_routes import auth_bp
+
+from infra.http.routes.authentication_routes import auth_bp
+from infra.http.routes.status_routes import status_bp
+from infra.http.routes.token_routes import token_bp
 from infra.http.error_handler import register_error_handlers
 
 try:
@@ -23,6 +26,8 @@ CORS(app)
 register_error_handlers(app)
 
 app.register_blueprint(auth_bp)
+app.register_blueprint(status_bp)
+app.register_blueprint(token_bp)
 
 @app.route("/health", methods=["GET"])
 def health_check():

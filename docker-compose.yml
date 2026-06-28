@@ -42,5 +42,46 @@ services:
       db:
         condition: service_healthy
 
+  resurce-server:
+    build:
+      context: ./resurce_server
+      dockerfile: Dockerfile
+    container_name: resurce_server_app
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=auth_user
+      - DB_PASSWORD=auth_password
+      - DB_NAME=auth_db
+      - JWT_ALGORITHM=RS256
+      - JWT_PUBLIC_KEY_PATH=/app/resources/public_key.pem
+      - AUTH_SERVER_URL=http://auth-server:5000
+      - UPLOAD_DIR=/app/data
+    volumes:
+      - ./auth_server/resources/public_key.pem:/app/resources/public_key.pem:ro
+      - ./resurce_server/data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
+      auth-server:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pixel_frontend_app
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth-server
+      - resurce-server
+
 volumes:
   mysql_data:
+
+

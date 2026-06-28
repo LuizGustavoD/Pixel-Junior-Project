@@ -1,0 +1,234 @@
+.file-list-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-list-card.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.file-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.file-list-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.file-list-count {
+  font-size: 13px;
+  color: var(--text-muted);
+  background-color: var(--border);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.file-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.file-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.file-table th {
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.file-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.file-row {
+  transition: var(--transition);
+}
+
+.file-row:hover {
+  background-color: rgba(117, 76, 227, 0.02);
+}
+
+/* Cell Specific Styles */
+.file-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-name {
+  font-weight: 600;
+  color: var(--text-h);
+  word-break: break-all;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+/* Extensions Icons Colors */
+.file-icon-pdf {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+}
+
+.file-icon-image {
+  background-color: var(--accent-bg);
+  color: var(--accent);
+}
+
+.file-icon-txt {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.file-icon-default {
+  background-color: var(--border);
+  color: var(--text-muted);
+}
+
+.td-size, .td-date {
+  color: var(--text-muted);
+}
+
+/* Actions Cell */
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-delete {
+  color: var(--text-muted);
+}
+
+.btn-delete:hover {
+  color: var(--error) !important;
+  background-color: var(--error-bg) !important;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.confirm-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--error);
+  margin-right: 4px;
+}
+
+/* Loaders and Empty States */
+.file-list-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.file-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 320px;
+  text-align: center;
+}
+
+.file-list-empty-icon {
+  color: var(--border);
+}
+
+.file-list-empty h4 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.file-list-empty p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Table columns widths */
+.th-name { width: 45%; }
+.th-size { width: 15%; }
+.th-date { width: 20%; }
+.th-actions { width: 20%; text-align: right; }
+.td-actions { text-align: right; }
+@media (max-width: 768px) {
+  .th-date, .td-date {
+    display: none;
+  }
+  .th-name { width: 60%; }
+  .th-size { width: 20%; }
+  .th-actions { width: 20%; }
+}
+
+.preview-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+}
+
+.preview-image-element {
+  max-width: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+  display: block;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+
+.preview-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.preview-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+
