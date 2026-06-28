@@ -99,21 +99,23 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="modal-backdrop animate-fade-in" onClick={onClose}>
       <div
-        className={`modal-container modal-size-${size}`}
+        className={`modal-draggable-wrapper modal-size-${size}`}
         style={containerStyle}
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          className="modal-header"
-          style={headerStyle}
-          onMouseDown={handleMouseDown}
-        >
-          {title && <h3 className="modal-title">{title}</h3>}
-          <button className="modal-close" onClick={onClose} aria-label="Fechar">
-            ×
-          </button>
+        <div className="modal-container">
+          <div
+            className="modal-header"
+            style={headerStyle}
+            onMouseDown={handleMouseDown}
+          >
+            {title && <h3 className="modal-title">{title}</h3>}
+            <button className="modal-close" onClick={onClose} aria-label="Fechar">
+              ×
+            </button>
+          </div>
+          <div className="modal-body">{children}</div>
         </div>
-        <div className="modal-body">{children}</div>
       </div>
     </div>
   );
