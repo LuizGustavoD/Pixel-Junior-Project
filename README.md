@@ -141,14 +141,32 @@ Este projeto foi concebido seguindo um modelo de desenvolvimento híbrido, em qu
 
 ## 6. Funcionalidades Implementadas / Não Implementadas
 
-### Implementadas
-* **Autenticação**: Cadastro e login de usuários por e-mail/senha com persistência local de sessão via tokens JWT.
-* **Gerenciamento de Arquivos**: Envio (drag-and-drop com progresso), listagem (nome original, tamanho, data), download em streaming e exclusão física imediata.
-* **Restrições de Segurança**: Bloqueio de arquivos maiores de 10MB, tipos de arquivos restritos (.png, .jpg, .jpeg, .pdf, .txt) e validação de propriedade (usuário X não acessa arquivos de usuário Y).
-* **Interface Responsiva**: Visualizadores ajustados para telas Widescreen e dispositivos móveis, com ações de tabela centralizadas.
-* **Preview de Imagem**: Botão **"Preview"** para arquivos de imagem, abrindo um modal centralizado e móvel (draggable) que permite arrastar a janela clicando no cabeçalho superior.
-* **Fusos Horários**: Data de upload formatada dinamicamente utilizando a hora local do dispositivo do cliente.
-* **Erros Customizados**: Páginas de erro Nginx personalizadas com o layout do Pixel Driver.
+### A. Funcionalidades Obrigatórias (100% Implementadas)
+* **Autenticação**:
+  * Cadastro e login de usuários (e-mail e senha) com armazenamento seguro de hashes (`Bcrypt` com custo 12).
+  * Sessão persistente via gravação e validação local de tokens JWT no `localStorage`.
+  * Restrição rígida de rotas e ações para requisições não autenticadas.
+* **Página Principal — Meus Arquivos**:
+  * Tabela exibindo nome original do arquivo, tamanho formatado legível (Bytes, KB, MB) e data de upload localizada para o fuso horário da máquina do usuário.
+  * Ações rápidas de download e exclusão de registros.
+* **Upload de Arquivos**:
+  * Formulário interativo no frontend com suporte a arrastar-e-soltar (Drag-and-Drop) e seletor.
+  * Limitação estrita no frontend e backend para tamanho máximo de **10MB** e extensões permitidas (`.png`, `.jpg`, `.jpeg`, `.pdf`, `.txt`).
+  * Feedback dinâmico de carregamento com barra de progresso em tempo real, mensagens de sucesso e erros detalhados.
+* **Download de Arquivos**:
+  * Validação de segurança que permite o download exclusivo de arquivos de propriedade do próprio usuário autenticado.
+  * Implementação de streaming binário para otimização de banda e memória RAM.
+* **Exclusão de Arquivos**:
+  * Validação de propriedade do arquivo antes do processamento.
+  * Estratégia de **soft delete** (marcação lógica `is_deleted = True` no banco de dados) combinada com a **deleção física imediata** no storage do servidor para liberação de espaço em disco.
+* **Backend / API & Metadata**:
+  * APIs modulares independentes para autenticação (`auth_server`) e controle de arquivos/recursos (`resurce_server`).
+  * Modelagem de metadados completa contendo: `id` (UUID), `owner_id` (usuário), `original_name`, `storage_name` (chave única física), `content_type`, `size`, `created_at` e a flag de estado ativo (`is_deleted`).
 
-### Não Implementadas
-* **Compartilhamento de arquivos entre usuários**: Fora do escopo de requisitos da aplicação.
+### B. Pontos Extras (Bônus)
+* **Preview de Imagens (Implementado)**: Botão **"Preview"** para arquivos de imagem, abrindo um visualizador em modal responsivo, centralizado e **móvel** (draggable) que pode ser movido pelo cabeçalho superior.
+* **Download com Streaming (Implementado)**: Transferência binária feita em buffers de `8192 bytes` por geradores em Python direto ao cliente HTTP.
+* **Implementação de Cache (Implementado)**: Geração de miniaturas (thumbnails) na escala `120x120px` mantida puramente em buffer RAM via Pillow, evitando escritas duplicadas no disco físico, além de políticas de cache estático via Nginx.
+* **Abstração de Storage (Implementado)**: Persistência física baseada na interface abstrata `FileStorage`, deixando o código pronto para migração instantânea para provedores de nuvem (S3 ou MinIO) sem alterar a camada de aplicação.
+* **Deploy da Aplicação (Não Implementado em Produção)**: A aplicação foi totalmente conteinerizada com Docker Compose Multi-Stage, restando apenas o deploy automatizado em provedores de nuvem em produção.
+* **Versionamento de Arquivos e Links com Expiração (Não Implementado)**: Fora do escopo entregue.
