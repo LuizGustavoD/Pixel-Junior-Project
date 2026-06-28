@@ -8,7 +8,6 @@ from infra.http.routes.token_routes import token_bp
 from infra.http.error_handler import register_error_handlers
 
 def create_app():
-    # Initialize DB tables
     init_db()
 
     app = Flask(__name__)
