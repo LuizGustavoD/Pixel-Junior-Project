@@ -13,12 +13,21 @@ from infra.http.routes.status_routes import status_bp
 from infra.http.routes.token_routes import token_bp
 from infra.http.error_handler import register_error_handlers
 
-try:
-    print("Criando tabelas no banco de dados se não existirem...")
-    Base.metadata.create_all(bind=engine)
-    print("Tabelas verificadas/criadas com sucesso!")
-except Exception as e:
-    print(f"Erro ao inicializar o banco de dados: {e}")
+import time
+
+for attempt in range(10):
+    try:
+        print(f"Criando tabelas no banco de dados se não existirem (tentativa {attempt + 1}/10)...")
+        Base.metadata.create_all(bind=engine)
+        print("Tabelas verificadas/criadas com sucesso!")
+        break
+    except Exception as e:
+        print(f"Erro ao inicializar o banco de dados (tentativa {attempt + 1}/10): {e}")
+        if attempt < 9:
+            time.sleep(3)
+        else:
+            print("Falha definitiva ao inicializar o banco de dados. Continuando inicialização da aplicação...")
+
 
 app = Flask(__name__)
 CORS(app)
