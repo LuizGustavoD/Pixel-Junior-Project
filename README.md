@@ -127,13 +127,15 @@ tests\run_unit_tests.bat
 
 Este projeto foi concebido seguindo um modelo de desenvolvimento híbrido, em que o papel da inteligência artificial foi estritamente delimitado como ferramenta de suporte operacional, preservando a engenharia de software intelectual sob responsabilidade humana:
 
-* **Decisões Arquiteturais e Padrões de Projeto (Autoria Humana)**: Toda a arquitetura do sistema — incluindo a escolha do padrão Clean Architecture/Hexagonal nos back-ends, a assinatura e validação assimétrica de chaves criptográficas RS256, o modelo de banco de dados compartilhado, o fluxo de controle de concorrência com loops de retries para persistência de dados e a arquitetura das SPA (Single Page Application) — foi desenhada e decidida autonomamente pelo desenvolvedor humano, sem intervenção de modelos de geração de código.
-* **Estilo Visual e Experiência do Usuário (Autoria Humana)**: O design visual do frontend (layouts, paleta de cores primárias/secundárias, tipografia e arranjos responsivos dos containers) e a lógica de componentes personalizados foram estruturados diretamente pelo desenvolvedor para garantir aderência aos padrões de marca e usabilidade desejados.
+* **Decisões Arquiteturais e Padrões de Projeto (Autoria Humana)**: Toda a arquitetura do sistema incluindo a escolha do padrão Clean Architecture/Hexagonal nos back-ends, a assinatura e validação assimétrica de chaves criptográficas RS256, o modelo de banco de dados compartilhado, o fluxo de controle de concorrência com loops de retries para persistência de dados e a arquitetura das SPA (Single Page Application) foi desenhada e decidida autonomamente.
+* **Estilo Visual e Experiência do Usuário (Autoria Humana)**: O design visual do frontend (layouts, paleta de cores primárias/secundárias, tipografia e arranjos responsivos dos containers) e a lógica de componentes personalizados foram estruturados diretamente por mim.
 * **Papel da Inteligência Artificial (Suporte e Automação)**: A IA foi empregada como ferramenta de aceleração para tarefas de alta repetitividade e baixo nível de decisão conceitual:
   * Escrita e parametrização de testes unitários repetitivos contra a interface do Flask.
   * Geração e preenchimento de dados mockados (fixtures) para suítes de validação de ponta a ponta.
   * Auxílio na escrita de código boilerplate de componentes visuais React já definidos.
   * Validações sintáticas e correções automáticas de tipagem estática (TypeScript).
+  * Tarefas repetitivas e criação de componentes no REACT com ênfase estética (validação humana feita).
+  * Implementações e correções de código (validação e testes feitos de forma humana)
 
 ---
 
