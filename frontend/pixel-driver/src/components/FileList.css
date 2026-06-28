@@ -77,11 +77,30 @@
   font-weight: 600;
   color: var(--text-h);
   word-break: break-all;
-  max-width: 260px;
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+@media (min-width: 480px) {
+  .file-name {
+    max-width: 260px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .file-name {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .file-name {
+    max-width: 700px;
+  }
+}
+
 
 .file-icon {
   display: flex;
@@ -118,12 +137,14 @@
   color: var(--text-muted);
 }
 
-/* Actions Cell */
 .file-actions {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
+
 
 .btn-delete {
   color: var(--text-muted);

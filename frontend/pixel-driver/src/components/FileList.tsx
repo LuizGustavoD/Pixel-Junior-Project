@@ -220,7 +220,7 @@ export const FileList: React.FC<FileListProps> = ({
                             onClick={() => handlePreviewClick(file.id, file.original_name)}
                             disabled={isDownloading || isDeleting || isConfirming}
                           >
-                            Visualizar
+                            Preview
                           </Button>
                         )}
                         <Button
