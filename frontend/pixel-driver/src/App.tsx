@@ -163,7 +163,6 @@ function AppContent() {
     );
   }
 
-  // Authenticated Dashboard Layout
   return (
     <DashboardLayout user={user} onLogout={handleLogout}>
       <div className="dashboard-grid">

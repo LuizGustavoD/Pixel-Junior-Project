@@ -205,7 +205,8 @@
 /* Table columns widths */
 .th-name { width: 40%; }
 .th-size { width: 15%; }
-.th-date { width: 20%; }
+.th-date { width: 20%; text-align: center; }
+.td-date { text-align: center; }
 .th-actions { width: 25%; text-align: center; }
 .td-actions { text-align: center; }
 @media (max-width: 768px) {

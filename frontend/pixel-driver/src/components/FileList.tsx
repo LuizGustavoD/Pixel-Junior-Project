@@ -256,6 +256,7 @@ export const FileList: React.FC<FileListProps> = ({
         onClose={handleClosePreview}
         title={`Visualizar Imagem — ${previewFilename}`}
         size="lg"
+        draggable={true}
       >
         {previewUrl && (
           <div className="preview-modal-content">
