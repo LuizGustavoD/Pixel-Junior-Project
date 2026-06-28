@@ -1,110 +1,148 @@
 # Pixel Driver - Plataforma de Armazenamento de Arquivos
 
-Este projeto consiste em uma solucao corporativa para armazenamento, upload, download e gerenciamento de arquivos. A arquitetura e baseada em microsservicos/servicos orientados a contexto, encapsulada e orquestrada de forma nativa por meio do Docker.
+Este projeto consiste em uma solução corporativa para armazenamento, upload, download e gerenciamento de arquivos. A arquitetura é baseada em microsserviços/serviços orientados a contexto, encapsulada e orquestrada de forma nativa por meio do Docker.
 
 ---
 
-## Arquitetura do Sistema
+## 1. Arquitetura do Sistema
 
-O ecossistema e estruturado em tres modulos principais de responsabilidade unica:
+O ecossistema é estruturado em três módulos principais de responsabilidade única:
 
-1. **Servidor de Autenticacao (auth_server)**: Servico responsavel pela identidade, cadastro e login de usuarios, alem da emissao de sessoes criptografadas via JWT.
-2. **Servidor de Recursos (resurce_server)**: Servico voltado ao armazenamento fisico de arquivos e indexacao de metadados no banco de dados. Realiza a validacao de permissoes e seguranca em nivel de usuario.
-3. **Cliente Web (frontend)**: Aplicacao Single Page Application (SPA) construida em React + Vite, empacotada em servidor web Nginx para distribuicao de alta performance de ativos estaticos.
+1. **Servidor de Autenticação (auth_server)**: Serviço construído em Flask responsável pela identidade, cadastro e login de usuários, além da emissao de sessões criptografadas via JWT assimétrico (RS256).
+2. **Servidor de Recursos (resurce_server)**: Serviço em Flask voltado ao armazenamento físico de arquivos e indexação de metadados no banco de dados. Realiza a validação de permissões e segurança em nível de usuário, além de gerar miniaturas de imagem em tempo real.
+3. **Cliente Web (frontend)**: Aplicação SPA construída em React + TypeScript + Vite, otimizada para ser responsiva e adaptável em qualquer tamanho de monitor (celulares, tablets, notebooks e telas Widescreen 4K). É empacotada com Nginx para distribuição de alta performance.
 
-O banco de dados utilizado e o MySQL, compartilhado entre os microsservicos para permitir integridade de chaves estrangeiras de propriedade do arquivo.
+O banco de dados utilizado é o **MySQL 8.0**, compartilhado entre as APIs para garantir integridade referencial.
+
+```mermaid
+graph TD
+    User[Navegador / Cliente] -->|Porta 3000| FE[Frontend Nginx + React]
+    FE -->|Autenticação (Porta 5000)| AS[Auth Server API]
+    FE -->|Recursos/Arquivos (Porta 5001)| RS[Resource Server API]
+    AS -->|Persistência Relacional| DB[(MySQL Database)]
+    RS -->|Persistência Relacional| DB
+    RS -->|Validação de Assinatura JWT| AS
+```
 
 ---
 
-## Decisoes Tecnicas
+## 2. Decisões Técnicas Tomadas
 
-* **Criptografia Assimetrica para JWT**: O Servidor de Autenticacao assina os tokens de sessao utilizando uma chave privada RSA de 2048 bits. O Servidor de Recursos valida esses tokens localmente de forma assimetrica usando a respectiva chave publica, sem a necessidade de realizar chamadas REST de validacao adicionais ao Servidor de Autenticacao. Isso desacopla os servicos e reduz a latencia de rede.
-* **Streaming de Downloads**: A entrega de arquivos grandes e feita por meio de streaming direto do sistema de arquivos para a conexao de rede do cliente, dividindo o envio em buffers de 8192 bytes. Essa estrategia evita o carregamento do arquivo completo na memoria RAM do Servidor de Recursos, garantindo escalabilidade.
-* **Separacao de Bancos por Contexto de Execucao**: A stack em producao roda sobre o MySQL. No entanto, para garantir velocidade e isolamento absoluto durante a suite de testes unitarios locais, o sistema faz transicao automatica para o SQLite em memoria (`sqlite:///:memory:`).
-* **Nginx como Servidor de Producao**: O frontend e compilado estaticamente em Docker e servido pelo Nginx com roteamento SPA ativo (fallback de rotas desconhecidas para o index.html). Foi implementada uma regra especifica para ativos na pasta `/assets/` para prevenir falso-positivo de fallback em arquivos estaticos inexistentes.
-* **Subdiretorios Organizacionais**: O storage do Servidor de Recursos armazena fisicamente os uploads dentro de subdiretorios particionados por usuario (`data/users/<username>/`), evitando a degradacao de performance de indexacao do sistema de arquivos em cenarios com alto volume de dados na raiz do diretorio.
+* **Criptografia Assimétrica para JWT (RS256)**: O Servidor de Autenticação assina os tokens de sessão utilizando uma chave privada RSA de 2048 bits. O Servidor de Recursos valida esses tokens localmente de forma assimétrica usando a respectiva chave pública (exposta no endpoint `/token/public-key`), sem a necessidade de realizar chamadas REST adicionais de validação, reduzindo drasticamente a latência de rede.
+* **Resiliência de Inicialização (Connection Retry Loop)**: Implementamos um loop de verificação de conexão com o banco de dados (até 10 tentativas com intervalo de 3 segundos) no boot das APIs. Isso resolve a clássica condição de corrida em que as aplicações sobem mais rápido que a inicialização de privilégios do MySQL.
+* **Arquitetura Factory no Flask (App Factory)**: Refatoramos a estrutura das APIs de modo que os arquivos `main.py` atuem puramente como pontos de entrada de runtime, delegando a inicialização de conexões e montagem dos Blueprints para fábricas (`app_factory.py`) e módulos de configuração (`db_init.py`).
+* **Streaming de Downloads**: A entrega de arquivos grandes é feita por meio de streaming direto do sistema de arquivos para a conexão de rede do cliente, dividindo o envio em buffers de 8192 bytes. Essa estratégia evita o carregamento do arquivo completo na memória RAM do Servidor de Recursos, garantindo escalabilidade.
+* **Timezone Localizado no Frontend**: Os timestamps de upload do banco são armazenados em UTC e normalizados no frontend anexando o sufixo "Z" antes do parse. Isso faz com que o navegador efetue a conversão automática e exiba as datas no fuso horário exato do computador do usuário (ex: UTC-3 no Brasil).
+* **Modal de Preview Móvel (Draggable)**: Implementamos um wrapper externo (`modal-draggable-wrapper`) no componente de Modal. Isso desacopla as coordenadas de arraste da animação CSS de zoom de entrada do modal, evitando que a regra `animation-fill-mode: forwards` anule as transformações de translação e permitindo mover a tela livremente pelo cabeçalho.
+* **Layout Adaptável e Responsivo**: Aumentamos a largura máxima do painel principal para `1600px` em monitores grandes, criamos larguras máximas de nomes de arquivo dinâmicas (até `700px` em widescreen) e adicionamos empacotamento (`flex-wrap`) para botões de ação em telas pequenas (mobile/tablets).
+* **Isolamento de Testes Unitários**: A stack em produção roda sobre o MySQL, enquanto as suítes de testes locais utilizam o SQLite em memória (`sqlite:///:memory:`), garantindo velocidade e isolamento absoluto de estados de teste.
 
 ---
 
-## Como Executar o Projeto
+## 3. Como Executar o Projeto
 
-### Pre-requisitos
-* Docker e Docker Compose instalados no sistema operacional.
-
-### Metodo Recomendado (Docker Compose em Comando Unico)
+### A. Com Docker (Método Recomendado)
 A stack completa pode ser inicializada e configurada com apenas um comando executado na raiz do projeto:
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
-Para inicializacao automatica com resolucao de conflitos de volumes, seguranca do Windows contra OneDrive e sincronizacao automatica de schemas de banco, recomenda-se a utilizacao dos scripts na pasta `scripts/`:
-
-* **No Windows (cmd ou powershell):**
+Se preferir automatizar com healthchecks do banco e reiniciar os backends no tempo certo, utilize os scripts inclusos:
+* **No Windows:**
   ```cmd
   scripts\start_services.bat
   ```
-* **No Linux ou macOS:**
+* **No Linux/macOS:**
   ```bash
   chmod +x scripts/*.sh
   ./scripts/start_services.sh
   ```
 
-A aplicacao estara disponivel nas seguintes portas:
-* **Frontend Web:** http://localhost:3000
-* **API do Servidor de Autenticacao:** http://localhost:5000
-* **API do Servidor de Recursos:** http://localhost:5001
+A aplicação estará disponível em:
+* **Frontend Web:** [http://localhost:3000](http://localhost:3000)
+* **Auth Server API:** [http://localhost:5000](http://localhost:5000)
+* **Resource Server API:** [http://localhost:5001](http://localhost:5001)
 
-Para parar e limpar a stack:
-* **No Windows:** execute `scripts\stop_services.bat`
-* **No Linux/macOS:** execute `./scripts/stop_services.sh`
-
-### Scripts Utilitarios de Monitoramento e Logs
-Para facilitar a manutencao e analise de containers locais sem a necessidade de comandos extensos do Docker, foram desenvolvidos scripts CLI interativos dentro do diretorio `scripts/`:
-
-* **Visualizacao de Logs (`view_logs`)**:
-  * **Windows**: `scripts\view_logs.bat`
-  * **Linux/macOS**: `./scripts/view_logs.sh`
-  * Permite selecionar o container desejado e escolher entre a exibicao das ultimas 100 linhas ou o acompanhamento dos logs em tempo real (`tail -f`).
-* **Inspecao de Containers (`inspect_container`)**:
-  * **Windows**: `scripts\inspect_container.bat`
-  * **Linux/macOS**: `./scripts/inspect_container.sh`
-  * Menu interativo para impressao das configuracoes detalhadas de rede, variaveis de ambiente e volumes do container ativo via `docker inspect`.
+Para derrubar os containers e limpar os volumes:
+* **Windows**: `scripts\stop_services.bat`
+* **Linux/macOS**: `./scripts/stop_services.sh`
 
 ---
 
-## Suite de Testes e Runner Automatizado
+### B. Sem Docker (Desenvolvimento Local)
+Caso deseje rodar a aplicação localmente fora de containers, siga as instruções de cada módulo:
 
-O ecossistema possui cobertura completa de testes unitarios (disparados contra bancos SQLite locais em memoria para garantir isolamento e velocidade) e testes de integracao de ponta a ponta (E2E) rodando contra a stack conteinerizada do banco e APIs reais.
+#### 1. Auth Server
+```bash
+cd auth_server
+python -m venv .venv
+# Ativar venv (Windows: .\.venv\Scripts\activate | Linux: source .venv/bin/activate)
+pip install -r requirements.txt
+set DATABASE_URL=sqlite:///auth_local.db
+set JWT_PRIVATE_KEY_PATH=resources/private/private_key.pem
+python app/main.py
+```
 
-Para executar o pipeline de validacao completo de forma simplificada, utilize o Test Runner unificado:
+#### 2. Resource Server
+```bash
+cd resurce_server
+python -m venv .venv
+# Ativar venv
+pip install -r requirements.txt
+set DATABASE_URL=sqlite:///resource_local.db
+set UPLOAD_DIR=data
+set JWT_PUBLIC_KEY_PATH=../auth_server/resources/public_key.pem
+python app/main.py
+```
 
-* **No Windows:**
-  ```cmd
-  tests\run_unit_tests.bat
-  ```
-* **No Linux ou macOS:**
+#### 3. Frontend Web
+```bash
+cd frontend/pixel-driver
+npm install
+npm run dev
+```
+O frontend local estará em [http://localhost:5173](http://localhost:5173).
+
+---
+
+## 4. Suíte de Testes
+
+O projeto conta com cobertura completa de testes unitários e de integração:
+
+### Executando Testes Unitários:
+* **Auth Server**:
   ```bash
-  chmod +x tests/run_unit_tests.sh
-  ./tests/run_unit_tests.sh
+  .\auth_server\.venv\Scripts\python -m unittest discover -s auth_server/tests -p "*.py"
+  ```
+* **Resource Server**:
+  ```bash
+  .\resurce_server\.venv\Scripts\python -m unittest discover -s resurce_server/tests -p "*.py"
   ```
 
-### Caracteristicas do Test Runner:
-* **Pre-requisitos Autonomos**: O script verifica a integridade de dependencias locais antes da execucao. Caso detecte a ausencia de ambientes virtuais (`.venv`) do Python, ele realiza a criacao e instalacao silenciosa das dependencias de `requirements.txt` automaticamente.
-* **Ciclo de Vida do Docker**: Inicializa os containers da aplicacao, aguarda a integridade do banco MySQL, roda os testes de integracao E2E da pasta `tests/` e finaliza executando a limpeza e desmontagem completa de volumes e containers (`docker compose down -v`).
+### Executando Testes de Integração (com a stack Docker ativa):
+```bash
+.\resurce_server\.venv\Scripts\python -m unittest tests/test_integration.py
+```
+
+Para rodar todo o pipeline de testes em um único comando no Windows, execute:
+```cmd
+tests\run_unit_tests.bat
+```
+
+> [!TIP]
+> Os logs de validação e a lista completa dos cenários testados podem ser consultados no relatório [Tests_results.md](file:///c:/Users/luizd/OneDrive/Desktop/Junior_Project_Pixel/Tests_results.md).
 
 ---
 
----
-
-## Funcionalidades Implementadas / Nao Implementadas
+## 5. Funcionalidades Implementadas / Não Implementadas
 
 ### Implementadas
-* **Autenticacao**: Cadastro e login de usuarios por e-mail e senha, com persistencia de sessao automatica no LocalStorage do navegador.
-* **Meus Arquivos**: Listagem completa dos arquivos do usuario com nome original, tamanho formatado e data do upload.
-* **Acoes**: Download em streaming e exclusao fisica imediata no sistema de arquivos e banco de dados.
-* **Upload**: Drag-and-drop de arquivos no formulario do frontend com barra de progresso em tempo real e tratamento de erros.
-* **Restricoes**: Bloqueio de tamanho maximo de 10MB no frontend e backend, limite de formatos permitidos (.png, .jpg, .jpeg, .pdf, .txt) e bloqueio de acesso a arquivos de terceiros.
-* **Visualizacao**: Preview centralizado na tela de arquivos do tipo imagem com barra de acao interna para download e fechamento.
-* **Paginas de Erro Customizadas**: Nginx estruturado para responder com layouts personalizados do Pixel Driver em erros 403, 404 e 500.
+* **Autenticação**: Cadastro e login de usuários por e-mail/senha com persistência local de sessão via tokens JWT.
+* **Gerenciamento de Arquivos**: Envio (drag-and-drop com progresso), listagem (nome original, tamanho, data), download em streaming e exclusão física imediata.
+* **Restrições de Segurança**: Bloqueio de arquivos maiores de 10MB, tipos de arquivos restritos (.png, .jpg, .jpeg, .pdf, .txt) e validação de propriedade (usuário X não acessa arquivos de usuário Y).
+* **Interface Responsiva**: Visualizadores ajustados para telas Widescreen e dispositivos móveis, com ações de tabela centralizadas.
+* **Preview de Imagem**: Botão **"Preview"** para arquivos de imagem, abrindo um modal centralizado e móvel (draggable) que permite arrastar a janela clicando no cabeçalho superior.
+* **Fusos Horários**: Data de upload formatada dinamicamente utilizando a hora local do dispositivo do cliente.
+* **Erros Customizados**: Páginas de erro Nginx personalizadas com o layout do Pixel Driver.
 
-### Nao Implementadas
-* Nao ha funcionalidades pendentes ou fora de conformidade com a especificacao original de requisitos fornecida.
+### Não Implementadas
+* **Compartilhamento de arquivos entre usuários**: Fora do escopo de requisitos da aplicação.

@@ -21,6 +21,8 @@ O servico foi estruturado utilizando principios de Arquitetura Limpa (Clean/Hexa
 
 * **BCrypt**: Hashing de senhas utilizando o algoritmo de derivacao de chave BCrypt com um custo padrao de 12 rounds, oferecendo alta resistencia contra ataques de forca bruta ou rainbow tables.
 * **JWT Assimetrico**: A assinatura de sessao utiliza o algoritmo RS256. A chave privada RSA e mantida estritamente dentro do container do `auth_server` para assinatura no endpoint `/auth/login`, enquanto a chave publica correspondente e exposta publicamente ou copiada para outros containers para que realizem a validacao.
+* **Fabrica de Aplicacao (App Factory)**: Refatoracao do ponto de entrada do servidor. O arquivo `main.py` agora serve estritamente como iniciador de runtime, delegando a construcao e configuracao do Flask para o modulo `app_factory.py`.
+* **Resiliencia de Conexao com o Banco de Dados (Retry Loop)**: Criacao do modulo `db_init.py` contendo uma rotina de tentativas automatizadas (retries) ao conectar com o banco de dados relacional. Evita o travamento do container caso a API inicialize antes do MySQL atingir o estado `healthy`.
 * **Testes de Endpoints**: A suite de testes unitarios em [test_auth_endpoints.py](file:///c:/Users/luizd/OneDrive/Desktop/Junior_Project_Pixel/auth_server/tests/test_auth_endpoints.py) utiliza um banco de dados SQLite em memoria (`sqlite:///:memory:`). Os testes realizam o teardown completo do schema a cada execucao para isolamento total dos estados de teste.
 
 ---
