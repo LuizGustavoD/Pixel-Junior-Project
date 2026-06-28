@@ -8,9 +8,10 @@ Este projeto consiste em uma solução corporativa para armazenamento, upload, d
 
 O ecossistema é estruturado em três módulos principais de responsabilidade única:
 
-1. **Servidor de Autenticação (auth_server)**: Serviço construído em Flask responsável pela identidade, cadastro e login de usuários, além da emissao de sessões criptografadas via JWT assimétrico (RS256).
+1. **Servidor de Autenticação (auth_server)**: Serviço construído em Flask responsável pela identidade, cadastro e login de usuários, além da emissao de sessões criptografadas via JWT assimétrico (RS256) garantindo confiabilidade e segurança.
 2. **Servidor de Recursos (resurce_server)**: Serviço em Flask voltado ao armazenamento físico de arquivos e indexação de metadados no banco de dados. Realiza a validação de permissões e segurança em nível de usuário, além de gerar miniaturas de imagem em tempo real.
 3. **Cliente Web (frontend)**: Aplicação SPA construída em React + TypeScript + Vite, otimizada para ser responsiva e adaptável em qualquer tamanho de monitor (celulares, tablets, notebooks e telas Widescreen 4K). É empacotada com Nginx para distribuição de alta performance.
+4. **Extra**: Não foi implementado pela questão de tempo, mas era de interesse utilização de um WAF para monitoramento das requisições HTTPs que chegam até a aplicação, um open-source como:Corazza WAF ou algum nativo de cloud, como o AWS WAF. (Dependendo da cloud que foi feito o deploy).
 
 O banco de dados relacional utilizado é o **MySQL 8.0**, compartilhado entre as APIs de back-end para fins de manutenção de integridade referencial de chaves estrangeiras relacionadas à propriedade dos arquivos indexados.
 
@@ -24,7 +25,7 @@ O banco de dados relacional utilizado é o **MySQL 8.0**, compartilhado entre as
 * **Streaming de Downloads**: A entrega de arquivos grandes é feita por meio de streaming direto do sistema de arquivos para a conexão de rede do cliente, dividindo o envio em buffers de 8192 bytes. Essa estratégia evita o carregamento do arquivo completo na memória RAM do Servidor de Recursos, garantindo escalabilidade.
 * **Timezone Localizado no Frontend**: Os timestamps de upload do banco são armazenados em UTC e normalizados no frontend anexando o sufixo "Z" antes do parse. Isso faz com que o navegador efetue a conversão automática e exiba as datas no fuso horário exato do computador do usuário (ex: UTC-3 no Brasil).
 * **Modal de Preview Móvel (Draggable)**: Implementamos um wrapper externo (`modal-draggable-wrapper`) no componente de Modal. Isso desacopla as coordenadas de arraste da animação CSS de zoom de entrada do modal, evitando que a regra `animation-fill-mode: forwards` anule as transformações de translação e permitindo mover a tela livremente pelo cabeçalho.
-* **Layout Adaptável e Responsivo**: Aumentamos a largura máxima do painel principal para `1600px` em monitores grandes, criamos larguras máximas de nomes de arquivo dinâmicas (até `700px` em widescreen) e adicionamos empacotamento (`flex-wrap`) para botões de ação em telas pequenas (mobile/tablets).
+* **Arquitetura Domain, Infra, Application**: A arquitetura escolhida foi para uma maior devisão de responsabilidades, dividindo lógica de negócio de frameworks e comunicações externas.
 * **Isolamento de Testes Unitários**: A stack em produção roda sobre o MySQL, enquanto as suítes de testes locais utilizam o SQLite em memória (`sqlite:///:memory:`), garantindo velocidade e isolamento absoluto de estados de teste.
 
 ---
