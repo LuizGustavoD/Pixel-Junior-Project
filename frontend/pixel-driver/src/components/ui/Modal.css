@@ -37,6 +37,19 @@
 
 .modal-size-lg {
   max-width: 800px;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .modal-size-lg {
+    max-width: 950px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .modal-size-lg {
+    max-width: 1200px;
+  }
 }
 
 .modal-size-fit {

@@ -8,7 +8,12 @@ export function formatFileSize(bytes: number): string {
 
 export function formatDate(isoString: string): string {
   try {
-    const date = new Date(isoString);
+    if (!isoString) return '-';
+    let parsedString = isoString.replace(' ', 'T');
+    if (!parsedString.endsWith('Z') && !parsedString.includes('+') && !/-\d{2}:\d{2}$/.test(parsedString)) {
+      parsedString = parsedString + 'Z';
+    }
+    const date = new Date(parsedString);
     if (isNaN(date.getTime())) return '-';
     
     return date.toLocaleDateString('pt-BR', {
