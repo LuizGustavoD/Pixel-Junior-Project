@@ -1,2 +1,27 @@
-pycache
-.venv
+# Python virtual environments
+.venv/
+venv/
+env/
+/auth_server/.venv/
+/resurce_server/.venv/
+
+# Python compiled bytecode & cache
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# User upload directories
+/resurce_server/data/users/*
+!/resurce_server/data/users/.gitkeep
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+*.log
