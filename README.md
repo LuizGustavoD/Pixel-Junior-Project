@@ -57,6 +57,42 @@ Para parar e limpar a stack:
 * **No Windows:** execute `scripts\stop_services.bat`
 * **No Linux/macOS:** execute `./scripts/stop_services.sh`
 
+### Scripts Utilitarios de Monitoramento e Logs
+Para facilitar a manutencao e analise de containers locais sem a necessidade de comandos extensos do Docker, foram desenvolvidos scripts CLI interativos dentro do diretorio `scripts/`:
+
+* **Visualizacao de Logs (`view_logs`)**:
+  * **Windows**: `scripts\view_logs.bat`
+  * **Linux/macOS**: `./scripts/view_logs.sh`
+  * Permite selecionar o container desejado e escolher entre a exibicao das ultimas 100 linhas ou o acompanhamento dos logs em tempo real (`tail -f`).
+* **Inspecao de Containers (`inspect_container`)**:
+  * **Windows**: `scripts\inspect_container.bat`
+  * **Linux/macOS**: `./scripts/inspect_container.sh`
+  * Menu interativo para impressao das configuracoes detalhadas de rede, variaveis de ambiente e volumes do container ativo via `docker inspect`.
+
+---
+
+## Suite de Testes e Runner Automatizado
+
+O ecossistema possui cobertura completa de testes unitarios (disparados contra bancos SQLite locais em memoria para garantir isolamento e velocidade) e testes de integracao de ponta a ponta (E2E) rodando contra a stack conteinerizada do banco e APIs reais.
+
+Para executar o pipeline de validacao completo de forma simplificada, utilize o Test Runner unificado:
+
+* **No Windows:**
+  ```cmd
+  tests\run_unit_tests.bat
+  ```
+* **No Linux ou macOS:**
+  ```bash
+  chmod +x tests/run_unit_tests.sh
+  ./tests/run_unit_tests.sh
+  ```
+
+### Caracteristicas do Test Runner:
+* **Pre-requisitos Autonomos**: O script verifica a integridade de dependencias locais antes da execucao. Caso detecte a ausencia de ambientes virtuais (`.venv`) do Python, ele realiza a criacao e instalacao silenciosa das dependencias de `requirements.txt` automaticamente.
+* **Ciclo de Vida do Docker**: Inicializa os containers da aplicacao, aguarda a integridade do banco MySQL, roda os testes de integracao E2E da pasta `tests/` e finaliza executando a limpeza e desmontagem completa de volumes e containers (`docker compose down -v`).
+
+---
+
 ---
 
 ## Funcionalidades Implementadas / Nao Implementadas
