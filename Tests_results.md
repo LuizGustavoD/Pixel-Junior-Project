@@ -14,8 +14,7 @@ Este documento apresenta o relatório detalhado de testes unitários, testes de 
 | **Scripts de DevOps** | 4 | 4 | 0 | 0 | **PASSOU** |
 
 > [!NOTE]
-> Todos os testes rodaram de forma automática e integrada no clone de simulação localizado em `C:\Users\luizd\OneDrive\Desktop\Pixel_Simulation_Production_Test` sem exigir ajustes manuais ou configurações prévias além do comando padrão `docker compose up -d`.
-
+> Todos os testes rodaram de forma automática e integrada no clone de simulação localizado 
 ---
 
 ## 2. Detalhes dos Testes Unitários
