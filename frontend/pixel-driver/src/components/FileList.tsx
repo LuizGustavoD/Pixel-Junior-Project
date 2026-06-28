@@ -166,7 +166,7 @@ export const FileList: React.FC<FileListProps> = ({
             <tr>
               <th className="th-name">Nome</th>
               <th className="th-size">Tamanho</th>
-              <th className="th-date">Data de Upload</th>
+              <th className="th-date">Upload</th>
               <th className="th-actions">Ações</th>
             </tr>
           </thead>
